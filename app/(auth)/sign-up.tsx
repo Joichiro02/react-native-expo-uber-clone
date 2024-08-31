@@ -2,6 +2,7 @@ import CustomButton from '@/components/CustomButton';
 import InputField from '@/components/InputField';
 import OAuth from '@/components/OAuth';
 import { icons, images } from '@/constants';
+import { fetchAPI } from '@/lib/fetch';
 import { useSignUp } from '@clerk/clerk-expo';
 import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
@@ -56,7 +57,14 @@ export default function SignUp() {
 			console.log('Status', completeSignUp);
 
 			if (completeSignUp.status === 'complete') {
-				// TODO: create a database user!
+				await fetchAPI('/(api)/user', {
+					method: 'POST',
+					body: JSON.stringify({
+						name: form.name,
+						email: form.email,
+						clerkId: completeSignUp.createdUserId
+					})
+				});
 
 				await setActive({ session: completeSignUp.createdSessionId });
 				setVerification({ ...verification, state: 'success' });
@@ -155,7 +163,10 @@ export default function SignUp() {
 						</Text>
 						<CustomButton
 							title="Browse Home"
-							onPress={() => router.replace('/(root)/(tabs)/home')}
+							onPress={() => {
+								setShowSuccessModal(false);
+								router.replace('/(root)/(tabs)/home');
+							}}
 							className="mt-5"
 						/>
 					</View>

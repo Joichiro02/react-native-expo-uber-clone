@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import '../styles.css';
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
+import { tokenCache } from '@/lib/auth';
 
 NativeWindStyleSheet.setOutput({
 	default: 'native',
@@ -14,9 +15,7 @@ NativeWindStyleSheet.setOutput({
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
-
 
 export default function RootLayout() {
 	const [loaded] = useFonts({
@@ -46,7 +45,7 @@ export default function RootLayout() {
 	}
 
 	return (
-		<ClerkProvider publishableKey={publishableKey}>
+		<ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
 			<ClerkLoaded>
 				<Stack>
 					<Stack.Screen name="index" options={{ headerShown: false }} />
