@@ -162,7 +162,7 @@ export default function Home() {
 	}) => {
 		setDestinationLocation(location);
 
-		// router.push("/(root)/find-ride");
+		router.push("/(root)/find-ride");
 	};
 
 	return (
