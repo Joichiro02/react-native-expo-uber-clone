@@ -5,6 +5,7 @@ import { NativeWindStyleSheet } from 'nativewind';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import '../styles.css';
+import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 
 NativeWindStyleSheet.setOutput({
 	default: 'native',
@@ -12,6 +13,10 @@ NativeWindStyleSheet.setOutput({
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
 
 export default function RootLayout() {
 	const [loaded] = useFonts({
@@ -34,12 +39,22 @@ export default function RootLayout() {
 		return null;
 	}
 
+	if (!publishableKey) {
+		throw new Error(
+			'Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env',
+		);
+	}
+
 	return (
-		<Stack>
-			<Stack.Screen name="index" options={{ headerShown: false }} />
-			<Stack.Screen name="(auth)" options={{ headerShown: false }} />
-			<Stack.Screen name="(root)" options={{ headerShown: false }} />
-			<Stack.Screen name="+not-found" />
-		</Stack>
+		<ClerkProvider publishableKey={publishableKey}>
+			<ClerkLoaded>
+				<Stack>
+					<Stack.Screen name="index" options={{ headerShown: false }} />
+					<Stack.Screen name="(auth)" options={{ headerShown: false }} />
+					<Stack.Screen name="(root)" options={{ headerShown: false }} />
+					<Stack.Screen name="+not-found" />
+				</Stack>
+			</ClerkLoaded>
+		</ClerkProvider>
 	);
 }
